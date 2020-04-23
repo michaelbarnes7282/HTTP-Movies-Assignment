@@ -12,6 +12,7 @@ const initialMovie = {
 
 const UpdateForm = props => {
     const [movie, setMovie] = useState(initialMovie);
+    const [actors, setActors] = useState([]);
     const { id } = useParams();
     const { push } = useHistory();
 
@@ -37,7 +38,9 @@ const UpdateForm = props => {
             ...movie,
             [ev.target.name]: value
         });
+
     };
+
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -53,12 +56,24 @@ const UpdateForm = props => {
                 props.movieList.sort();
                 push(`/`)
             })
-            axios
-            .get(`http://localhost:5000/api/movies/`)
-            .then(res => console.log('second get', res))
-            .catch(err => console.log(err))
+        // axios
+        //     .get(`http://localhost:5000/api/movies/`)
+        //     .then(res => console.log('second get', res))
+        //     .catch(err => console.log(err))
     };
 
+    const star = (index) => (e) => {
+        setMovie({
+            ...movie,
+            stars: movie.stars.map((star, starIndex) => {
+                return starIndex === index ? e.target.value : star;
+            }),
+        });
+    };
+    const addStar = (e) => {
+        e.preventDefault();
+        setMovie({ ...movie, stars: [...movie.stars, ""] });
+    };
     return (
         <div>
             <h2>Update Movie</h2>
@@ -86,7 +101,21 @@ const UpdateForm = props => {
                     placeholder="metascore"
                     value={movie.metascore}
                 />
-
+                <div>
+                    {movie.stars.map((starName, index) => {
+                        return (
+                            <input
+                                type="text"
+                                key={index}
+                                name="stars"
+                                placeholder="stars"
+                                value={starName}
+                                onChange={star(index)}
+                            />
+                        );
+                    })}
+                    <button onClick={addStar}>add star</button>
+                </div>
                 <button>Update</button>
             </form>
         </div>
